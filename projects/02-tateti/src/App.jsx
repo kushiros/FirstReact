@@ -1,17 +1,26 @@
 import './App.css'
-import {useState} from "react" 
+import {useState, useEffect} from "react" 
 import confetti from "canvas-confetti"
 import { Square } from './components/Square.jsx'
 import {Turns} from './constants.js'
 import { checkWinner, checkEndGame } from './Logic/Board.js'
 import { WinnerModal } from './components/WinnerModal.jsx'
+import { saveGameToStorage, resetGameStorage } from './Logic/Storage/index.js'
 
 function App() {
-  const [board,setBoard] = useState(Array(9).fill(null))
+  const [board,setBoard] = useState(() => {
+    const boardFromStorage = window.localStorage.getItem('board')
+    return boardFromStorage ? JSON.parse(boardFromStorage) : Array(9).fill(null)
+    
+  })
 
-  console.log(board)
+  
 
-  const [turn,setTurn] =  useState(Turns.X)
+  const [turn,setTurn] =  useState(() =>{
+    const turnFromStorage = window.localStorage.getItem('turn')
+    
+    return JSON.parse(turnFromStorage)?? Turns.X
+  })
 
   const [winner, setWinner] = useState(null)
   
@@ -20,6 +29,9 @@ function App() {
     setBoard(Array(9).fill(null))
     setWinner(null)
     setTurn(Turns.X)
+
+    resetGameStorage()
+    
   }
 
 
@@ -32,6 +44,11 @@ function App() {
 
     const newTurn = turn === Turns.X ? Turns.O : Turns.X;
     setTurn(newTurn)
+    saveGameToStorage({
+      board: newBoard,
+      turn: newTurn
+    })
+    
     const newWinner = checkWinner(newBoard)
     if(newWinner){
       confetti()
@@ -41,6 +58,8 @@ function App() {
       setWinner(false)
     }
   }
+
+
 
   return (
     <>
