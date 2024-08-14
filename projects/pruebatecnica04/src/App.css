@@ -18,3 +18,12 @@ section img{
     max-width: 320px;
     height: auto;
 }
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 40px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+}
